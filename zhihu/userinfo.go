@@ -47,6 +47,11 @@ func GetUserInfo(name string, usingCache bool) {
 		}
 	}
 	u.Insert()
+	if u.Gender == 0 {
+		FollowSomeUser(u.UrlToken, true)
+	} else {
+
+	}
 	_, err = redisConn.Do("SET", fmt.Sprintf("user_info_%s", name), name)
 	if err != nil {
 		log.Error(err)
@@ -162,6 +167,7 @@ func Getquestions(name string, usingCache bool) {
 			}
 			continue
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, u.Data...)
 		u.Data = *new([]*Question)
 		if u.Paging.Is_start == true {
@@ -239,6 +245,7 @@ func Getanswers(name string, usingCache bool) {
 			}
 			continue
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, u.Data...)
 		u.Data = *new([]*UserAnswer)
 		if u.Paging.Is_start == true {
@@ -305,6 +312,7 @@ func Getarticles(name string, usingCache bool) {
 			}
 			continue
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, u.Data...)
 		u.Data = *new([]*UserArticles)
 		if u.Paging.Is_start == true {
@@ -374,6 +382,7 @@ func Getfavlists(name string, usingCache bool) {
 			}
 			return
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, u.Data...)
 		u.Data = *new([]*UserFavlists)
 		if u.Paging.Is_start == true {
@@ -423,6 +432,7 @@ func Getfollowers(name string, usingCache bool) {
 		}
 		return
 	}
+	time.Sleep(time.Second * 5)
 	var result []*UserFollowers
 	result = append(result, u.Data...)
 	var continued = true
@@ -505,6 +515,7 @@ func Getfollowees(name string, usingCache bool) {
 			}
 			return
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, u.Data...)
 		u.Data = *new([]*UserFollowees)
 		if u.Paging.Is_start == true {
@@ -579,6 +590,7 @@ func Getcolumncontributions(name string, usingCache bool) {
 			}
 			return
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, u.Data...)
 		u.Data = *new([]*Cell)
 		if u.Paging.Is_start == true {
@@ -712,6 +724,12 @@ func FollowSomeUser(urltoken string, usingCache bool) {
 	return
 }
 
+func UnFollowSomeUser(urltoken string, usingCache bool) {
+	url := fmt.Sprintf(MainUrl+UrlUserFollowers, urltoken)
+	client.Do()
+	return
+}
+
 type Mark struct {
 	Mark int    `json:"mark,omitempty"`
 	Name string `json:"name,omitempty"`
@@ -729,16 +747,16 @@ func NewUser(username string) *User {
 			&Mark{0, username, Getcollections},
 			&Mark{0, username, Getactivities},
 			&Mark{1, username, Getquestions},
-			&Mark{0, username, Getarticles},
+			&Mark{1, username, Getarticles},
 			&Mark{1, username, Getanswers},
-			&Mark{0, username, Getfavlists},
+			&Mark{1, username, Getfavlists},
 			&Mark{1, username, Getfollowers},
 			&Mark{1, username, Getfollowees},
 			&Mark{0, username, Getcolumncontributions},
 			&Mark{0, username, Getfollowingtopiccontributions},
-			&Mark{0, username, Getfollowingquestions},
+			&Mark{1, username, Getfollowingquestions},
 			&Mark{0, username, Getfollowingfavlists},
-			&Mark{1, username, FollowSomeUser},
+			&Mark{0, username, FollowSomeUser},
 		},
 	}
 }
@@ -794,7 +812,7 @@ func UserLoop() {
 				}()
 				NewUser(name).Process()
 			}()
-			time.Sleep(time.Second * 30)
+			time.Sleep(time.Second * 5)
 		}
 	}
 }

@@ -262,6 +262,7 @@ func GetQuestionFollowers(qid int64, usingCache bool) {
 			}
 			continue
 		}
+		time.Sleep(time.Second * 5)
 		result = append(result, folques.Data...)
 		folques.Data = *new([]*UserCommon)
 		if folques.Paging.Is_start == true {
@@ -402,7 +403,7 @@ func QuestionsLoop() {
 			go func(idx int64) {
 				NewQuestion(idx).Process()
 			}(qid)
-			time.Sleep(time.Second * 60)
+			time.Sleep(time.Second * 5)
 		}
 	}
 }

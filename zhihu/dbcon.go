@@ -44,7 +44,7 @@ func InitMysql() {
 	orm.RegisterModel(new(UserArticles))
 
 	orm.Debug = false
-	orm.RunSyncdb("default", true, true)
+	//orm.RunSyncdb("default", true, true)
 	o = orm.NewOrm()
 	fmt.Println("database init ok")
 }
@@ -61,8 +61,8 @@ func InitRedis() {
 			return reconn, err
 		},
 		MaxIdle:     10,
-		MaxActive:   10,
-		IdleTimeout: 5 * time.Second,
+		MaxActive:   1000,
+		IdleTimeout: 2 * time.Second,
 		Wait:        false,
 	}
 

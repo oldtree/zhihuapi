@@ -95,7 +95,7 @@ func AnswersLoop() {
 			go func(idx int64) {
 				NewAnswer(idx).Process()
 			}(aid)
-			time.Sleep(time.Second * 10)
+			time.Sleep(time.Second * 1)
 		}
 	}
 }
